@@ -8,10 +8,14 @@ spec:
   version: v1
   metadata:
   - name: redisHost
-    value: localhost:6379
+    value: {{ redis_host_and_port }}
   - name: redisPassword
     secretKeyRef:
-      name: redis-secret
-      key:  redis-password
+      name: {{ redis_key_secret_name }}
+      key:  {{ redis_key_secret_name }}
+  - name: enableTLS
+    value: true
 auth:
   secretStore: azurekeyvault
+scopes:
+- tmtest

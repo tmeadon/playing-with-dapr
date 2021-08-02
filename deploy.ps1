@@ -34,13 +34,20 @@ helm upgrade --install dapr dapr/dapr `
 --wait
 
 # deploy secret store
-$file = Get-Item -Path '.\k8s\secret-store.yaml'
+$file = Get-Item -Path '.\k8s\dapr-secret-store.yaml'
 $fileContents = Get-Content -Path $file.FullName -Raw
-$fileContents = $fileContents.Replace('{{ vault_name }}', $azureDeploy.Outputs['keyVaultName'].Value)
-$fileContents = $fileContents.Replace('{{ msi_client_id }}', $azureDeploy.Outputs['msiClientId'].Value)
+$fileContents = $fileContents.Replace('{{ vault_name }}', $mainDeploy.Outputs['keyVaultName'].Value)
+$fileContents = $fileContents.Replace('{{ msi_client_id }}', $mainDeploy.Outputs['msiClientId'].Value)
 $fileContents | kubectl apply -f -
 
 # deploy test pod (with curl installed)
 kubectl apply -f './k8s/busybox-basic.yaml'
+
+# deploy redis component
+$file = Get-Item -Path '.\k8s\dapr-redis.yaml'
+$fileContents = Get-Content -Path $file.FullName -Raw
+$fileContents = $fileContents.Replace('{{ redis_host_and_port }}', $mainDeploy.Outputs['redisHostAndPort'].Value)
+$fileContents = $fileContents.Replace('{{ redis_key_secret_name }}', $mainDeploy.Outputs['redisKeySecretName'].Value)
+$fileContents | kubectl apply -f -
 
 
