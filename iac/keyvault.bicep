@@ -1,6 +1,7 @@
 param baseName string
 param location string
 param msiName string
+param redisKey string
 
 var vaultName = uniqueString(baseName, resourceGroup().id)
 
@@ -31,6 +32,14 @@ resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
       }
     ]
   }
+
+  resource redisKeySecret 'secrets' = {
+    name: 'redisKey'
+    properties: {
+      value: redisKey
+    }
+  }
 }
 
 output vaultName string = vault.name
+output redisKeySecretName string = vault::redisKeySecret.name

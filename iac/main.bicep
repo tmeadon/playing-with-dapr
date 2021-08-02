@@ -29,6 +29,15 @@ module identity 'identity.bicep' = {
   }
 }
 
+module redis 'redis.bicep' = {
+  scope: rsg
+  name: 'redis'
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
 module keyVault 'keyvault.bicep' = {
   scope: rsg
   name: 'keyvault'
@@ -36,6 +45,7 @@ module keyVault 'keyvault.bicep' = {
     location: location
     msiName: identity.outputs.msiName
     baseName: baseName
+    redisKey: redis.outputs.redisKey
   }
 }
 
@@ -46,3 +56,5 @@ output msiPrincipalId string = identity.outputs.msiPrincipalId
 output msiClientId string = identity.outputs.msiClientId
 output msiName string = identity.outputs.msiName
 output keyVaultName string = keyVault.outputs.vaultName
+output redisKeySecretName string = keyVault.outputs.redisKeySecretName
+output redisHostAndPort string = '${redis.outputs.redisHostName}:${redis.outputs.redisPort}'
