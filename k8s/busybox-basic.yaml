@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tmtest
+spec:
+  selector:
+    matchLabels:
+      app: tmtest
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: tmtest
+        aadpodidbinding: msi
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "tmtest"
+        dapr.io/log-level: "debug"
+    spec:
+      containers:
+      - name: busybox
+        image: radial/busyboxplus:curl
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        command: ["sh", "-c", "sleep 3600"]
+
