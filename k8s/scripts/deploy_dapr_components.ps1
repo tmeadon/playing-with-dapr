@@ -9,8 +9,10 @@ foreach ($file in $manifests)
     $fileContents = $fileContents.Replace('{{ cosmos_url }}', $env:cosmosUrl)
     $fileContents = $fileContents.Replace('{{ cosmos_db_name }}', $env:cosmosDbName)
 
-    0..$cosmosCollectionNames.Count | ForEach-Object {
-        $fileContents = $fileContents.Replace("{{ cosmos_collection_name_$($_) }}", $env:cosmosCollectionNames[$_])
+    $cosmosCollections = $env:cosmosCollectionNames | ConvertFrom-Json
+
+    0..$cosmosCollections.Count | ForEach-Object {
+        $fileContents = $fileContents.Replace("{{ cosmos_collection_name_$($_) }}", $cosmosCollections[$_])
     }
 
     $fileContents | kubectl apply -f -
