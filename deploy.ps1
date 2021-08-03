@@ -19,8 +19,9 @@ $params = @{
 }
 New-AzResourceGroupDeployment @params | Out-Null
 
-# enable aad pod identity
+# enable aad pod identity and attach acr
 az aks get-credentials --name $mainDeploy.Outputs['aksClusterName'].Value --resource-group $resourceGroupName
+az aks update --resource-group $resourceGroupName --name  $mainDeploy.Outputs['aksClusterName'].Value --attach-acr $mainDeploy.Outputs['acrName'].Value
 az aks update --resource-group $resourceGroupName --name  $mainDeploy.Outputs['aksClusterName'].Value --enable-pod-identity
 az aks pod-identity add --resource-group $resourceGroupName --cluster-name  $mainDeploy.Outputs['aksClusterName'].Value --namespace 'default' --name msi --identity-resource-id $azureDeploy.Outputs['msiResourceId'].Value
 
