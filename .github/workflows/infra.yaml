@@ -21,16 +21,15 @@ jobs:
         uses: Azure/arm-deploy@v1
         with:
           scope: subscription
-          template: iac/main.bicep
-          parameters: iac/main.parameters.json
+          template: ./iac/main.bicep
+          parameters: ./iac/main.parameters.json
           region: 'uksouth'
-
 
       - name: deploy perms bicep template
         uses: Azure/arm-deploy@v1
         with:
           resourceGroupName: ${{ steps.mainAzureDeploy.outputs.aksNodeResourceGroup }}
-          template: iac/nodes-rsg-perms.bicep
+          template: ./iac/nodes-rsg-perms.bicep
           parameters: assigneePrincipalId=${{ steps.mainAzureDeploy.outputs.msiPrincipalId }}
 
       - name: connect to aks
