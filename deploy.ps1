@@ -13,7 +13,7 @@ $mainDeploy = New-AzDeployment @params
 # deploy additional role assignments
 $params = @{
     ResourceGroupName   = $mainDeploy.Outputs['aksNodeResourceGroup'].Value
-    TemplateFile        = './iac/nodesRsgPerms.bicep'
+    TemplateFile        = './iac/nodes-rsg-perms.bicep'
     assigneePrincipalId = $mainDeploy.Outputs['msiPrincipalId'].Value
     Verbose             = $true
 }
@@ -41,13 +41,19 @@ $fileContents = $fileContents.Replace('{{ msi_client_id }}', $mainDeploy.Outputs
 $fileContents | kubectl apply -f -
 
 # deploy test pod (with curl installed)
-kubectl apply -f './k8s/busybox-basic.yaml'
+kubectl apply -f './k8s/busybox.yaml'
 
-# deploy redis component
-$file = Get-Item -Path '.\k8s\dapr-redis.yaml'
+# deploy cosmos component
+$file = Get-Item -Path '.\k8s\dapr-cosmos.yaml'
 $fileContents = Get-Content -Path $file.FullName -Raw
-$fileContents = $fileContents.Replace('{{ redis_host_and_port }}', $mainDeploy.Outputs['redisHostAndPort'].Value)
-$fileContents = $fileContents.Replace('{{ redis_key_secret_name }}', $mainDeploy.Outputs['redisKeySecretName'].Value)
+$fileContents = $fileContents.Replace('{{ cosmos_url }}', $mainDeploy.Outputs['cosmosUrl'].Value)
+$fileContents = $fileContents.Replace('{{ cosmos_key_secret_name }}', $mainDeploy.Outputs['cosmosKeySecretName'].Value)
+$fileContents = $fileContents.Replace('{{ cosmos_db_name }}', $mainDeploy.Outputs['cosmosDbName'].Value)
+$fileContents = $fileContents.Replace('{{ cosmos_collection_name_1 }}', $mainDeploy.Outputs['cosmosCollections'].Value[0].Value)
 $fileContents | kubectl apply -f -
 
-
+# deploy service bus component
+$file = Get-Item -Path '.\k8s\dapr-servicebus.yaml'
+$fileContents = Get-Content -Path $file.FullName -Raw
+$fileContents = $fileContents.Replace('{{ sb_conn_str_secret_name }}', $mainDeploy.Outputs['serviceBusConnStrSecretName'].Value)
+$fileContents | kubectl apply -f -

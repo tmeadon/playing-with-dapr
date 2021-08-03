@@ -1,0 +1,21 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: cosmos-app1
+  namespace: default
+spec:
+  type: state.azure.cosmosdb
+  version: v1
+  metadata:
+  - name: url
+    value: {{ cosmos_url }}
+  - name: masterKey
+    secretKeyRef:
+      name: {{ cosmos_key_secret_name }}
+      key:  {{ cosmos_key_secret_name }}
+  - name: database
+    value: {{ cosmos_db_name }}
+  - name: collection
+    value: {{ cosmos_collection_name_1 }}
+auth:
+  secretStore: azurekeyvault

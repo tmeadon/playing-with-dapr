@@ -1,0 +1,28 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: servicebus
+  namespace: default
+spec:
+  type: pubsub.azure.servicebus
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: {{ sb_conn_str_secret_name }}
+      key:  {{ sb_conn_str_secret_name }}
+auth:
+  secretStore: azurekeyvault
+
+---
+
+apiVersion: dapr.io/v1alpha1
+kind: Subscription
+metadata:
+  name: app1-subscription
+spec:
+  topic: app1
+  route: /app1sub
+  pubsubname: servicebus
+scopes:
+- app1

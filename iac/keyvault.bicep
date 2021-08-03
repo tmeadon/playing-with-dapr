@@ -1,7 +1,8 @@
 param baseName string
 param location string
 param msiName string
-param redisKey string
+param cosmosKey string
+param serviceBusConnStr string
 
 var vaultName = uniqueString(baseName, resourceGroup().id)
 
@@ -19,27 +20,42 @@ resource vault 'Microsoft.KeyVault/vaults@2019-09-01' = {
     }
     createMode: 'recover'
     tenantId: subscription().tenantId
-    accessPolicies: [
-      {
-        objectId: msi.properties.principalId
-        tenantId: msi.properties.tenantId
-        permissions: {
-          secrets: [
-            'get'
-            'list'
-          ]
-        }
-      }
-    ]
+    accessPolicies: []
   }
 
-  resource redisKeySecret 'secrets' = {
-    name: 'redisKey'
+  resource cosmosKeySecret 'secrets' = {
+    name: 'cosmosKey'
     properties: {
-      value: redisKey
+      value: cosmosKey
     }
   }
+
+  resource sbSecret 'secrets' = {
+    name: 'serviceBusConnStr'
+    properties: {
+      value: serviceBusConnStr
+    }
+  }
+
+  resource msiAccessPolicy 'accessPolicies' = {
+    name: 'add'
+    properties: {
+      accessPolicies: [
+        {
+          objectId: msi.properties.principalId
+          tenantId: msi.properties.tenantId
+          permissions: {
+            secrets: [
+              'get'
+              'list'
+            ]
+          }
+        }
+      ]
+    }
+  } 
 }
 
 output vaultName string = vault.name
-output redisKeySecretName string = vault::redisKeySecret.name
+output cosmosKeySecretName string = vault::cosmosKeySecret.name
+output serviceBusConnStrSecretName string = vault::sbSecret.name

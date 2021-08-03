@@ -29,9 +29,19 @@ module identity 'identity.bicep' = {
   }
 }
 
-module redis 'redis.bicep' = {
+module cosmos 'cosmos.bicep' = {
   scope: rsg
-  name: 'redis'
+  name: 'cosmos'
+  params: {
+    baseName: baseName
+    location: location
+    numAppContainers: 2
+  }
+}
+
+module servicebus 'servicebus.bicep' = {
+  scope: rsg
+  name: 'servicebus'
   params: {
     baseName: baseName
     location: location
@@ -45,7 +55,8 @@ module keyVault 'keyvault.bicep' = {
     location: location
     msiName: identity.outputs.msiName
     baseName: baseName
-    redisKey: redis.outputs.redisKey
+    cosmosKey: cosmos.outputs.masterKey
+    serviceBusConnStr: servicebus.outputs.connectionString
   }
 }
 
@@ -56,5 +67,8 @@ output msiPrincipalId string = identity.outputs.msiPrincipalId
 output msiClientId string = identity.outputs.msiClientId
 output msiName string = identity.outputs.msiName
 output keyVaultName string = keyVault.outputs.vaultName
-output redisKeySecretName string = keyVault.outputs.redisKeySecretName
-output redisHostAndPort string = '${redis.outputs.redisHostName}:${redis.outputs.redisPort}'
+output cosmosUrl string = cosmos.outputs.url
+output cosmosDbName string = cosmos.outputs.dbName
+output cosmosCollections array = cosmos.outputs.appCollections
+output cosmosKeySecretName string = keyVault.outputs.cosmosKeySecretName
+output serviceBusConnStrSecretName string = keyVault.outputs.serviceBusConnStrSecretName
