@@ -27,10 +27,6 @@ jobs:
           parameters: iac/main.parameters.json
           region: 'uksouth'
 
-      - name: mask msi resource id
-        run: |
-          echo "::add-mask::${{ steps.mainAzureDeploy.outputs.msiResourceId }}"
-
       - name: deploy perms bicep template
         uses: Azure/arm-deploy@v1
         with:
@@ -51,14 +47,9 @@ jobs:
           RSG_NAME: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
           AKS_CLUSTER_NAME: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
           ACR_NAME: ${{ steps.mainAzureDeploy.outputs.acrName }}
-          MSI_RESOURCE_ID: ${{ steps.mainAzureDeploy.outputs.msiResourceId }}
+          MSI_NAME: ${{ steps.mainAzureDeploy.outputs.msiName }}
         continue-on-error: false
 
       - name: install dapr
         run: sh ./k8s/scripts/install-dapr.sh
-        env:
-          RSG_NAME: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
-          AKS_CLUSTER_NAME: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
-          ACR_NAME: ${{ steps.mainAzureDeploy.outputs.acrName }}
-          MSI_RESOURCE_ID: ${{ steps.mainAzureDeploy.outputs.msiResourceId }}
         continue-on-error: false
