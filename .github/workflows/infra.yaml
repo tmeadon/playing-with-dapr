@@ -23,6 +23,7 @@ jobs:
           scope: subscription
           template: iac/main.bicep
           parameters: iac/main.parameters.json
+          region: 'uksouth'
 
 
       - name: deploy perms bicep template
@@ -31,7 +32,6 @@ jobs:
           resourceGroupName: ${{ steps.mainAzureDeploy.outputs.aksNodeResourceGroup }}
           template: iac/nodes-rsg-perms.bicep
           parameters: assigneePrincipalId=${{ steps.mainAzureDeploy.outputs.msiPrincipalId }}
-          region: 'uksouth'
 
       - name: connect to aks
         uses: azure/aks-set-context@v1
