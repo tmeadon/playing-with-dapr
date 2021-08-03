@@ -60,6 +60,15 @@ module keyVault 'keyvault.bicep' = {
   }
 }
 
+module acr 'acr.bicep' = {
+  scope: rsg
+  name: 'acr'
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
 output aksClusterName string = aks.outputs.clusterName
 output aksNodeResourceGroup string = aks.outputs.nodeResourceGroup
 output msiResourceId string = identity.outputs.msiResourceId
@@ -72,3 +81,4 @@ output cosmosDbName string = cosmos.outputs.dbName
 output cosmosCollections array = cosmos.outputs.appCollections
 output cosmosKeySecretName string = keyVault.outputs.cosmosKeySecretName
 output serviceBusConnStrSecretName string = keyVault.outputs.serviceBusConnStrSecretName
+output acrName string = acr.outputs.acrName
