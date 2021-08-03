@@ -1,0 +1,48 @@
+name: infrastructure
+env:
+  location: uksouth
+  resourceGroupName: dapr-testing
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: deploy main bicep template
+        id: mainAzureDeploy
+        uses: Azure/arm-deploy@v1
+        with:
+          scope: subscription
+          template: iac/main.bicep
+          parameters: iac/main.parameters.json
+
+      - name: deploy perms bicep template
+        uses: Azure/arm-deploy@v1
+        with:
+          resourceGroupName: ${{ steps.mainAzureDeploy.outputs.aksNodeResourceGroup }}
+          template: iac/nodes-rsg-perms.bicep
+          parameters: assigneePrincipalId=${{ steps.mainAzureDeploy.outputs.msiPrincipalId }}
+
+      - name: connect to aks
+        uses: azure/aks-set-context@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+          cluster-name: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
+          resource-group: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
+
+      - name: configure aks cluster
+        run: sh ./k8s/scripts/configure_cluster.sh
+        env:
+          RSG_NAME: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
+          AKS_CLUSTER_NAME: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
+          ACR_NAME: ${{ steps.mainAzureDeploy.outputs.acrName }}
+          MSI_RESOURCE_ID: ${{ steps.mainAzureDeploy.outputs.msiResourceId }}
+        continue-on-error: false

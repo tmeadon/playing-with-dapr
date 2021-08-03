@@ -82,3 +82,4 @@ output cosmosCollections array = cosmos.outputs.appCollections
 output cosmosKeySecretName string = keyVault.outputs.cosmosKeySecretName
 output serviceBusConnStrSecretName string = keyVault.outputs.serviceBusConnStrSecretName
 output acrName string = acr.outputs.acrName
+output resourceGroupName string = rsg.name
