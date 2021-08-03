@@ -11,11 +11,15 @@ spec:
     value: {{ cosmos_url }}
   - name: masterKey
     secretKeyRef:
-      name: {{ cosmos_key_secret_name }}
-      key:  {{ cosmos_key_secret_name }}
+      name: cosmosKey
+      key: cosmosKey  
   - name: database
     value: {{ cosmos_db_name }}
   - name: collection
-    value: {{ cosmos_collection_name_1 }}
+    value: {{ cosmos_collection_name_0 }}
 auth:
   secretStore: azurekeyvault
+scopes:
+- tmtest
+- backend
+- frontend

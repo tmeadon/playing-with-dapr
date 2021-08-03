@@ -53,3 +53,15 @@ jobs:
       - name: install dapr
         run: sh ./k8s/scripts/install_dapr.sh
         continue-on-error: false
+
+      - name: deploy dapr components
+        run: k8s/scripts/deploy_dapr_components.ps1
+        shell: pwsh
+        env:
+          keyVaultName: ${{ steps.mainAzureDeploy.outputs.keyVaultName }}
+          msiClientId: ${{ steps.mainAzureDeploy.outputs.msiClientId }}
+          cosmosUrl: ${{ steps.mainAzureDeploy.outputs.cosmosUrl }}
+          cosmosDbName: ${{ steps.mainAzureDeploy.outputs.cosmosDbName }}
+          cosmosCollectionNames: ${{ steps.mainAzureDeploy.outputs.cosmosCollections }}
+
+

@@ -9,8 +9,8 @@ spec:
   metadata:
   - name: connectionString
     secretKeyRef:
-      name: {{ sb_conn_str_secret_name }}
-      key:  {{ sb_conn_str_secret_name }}
+      name: serviceBusConnStr
+      key: serviceBusConnStr
 auth:
   secretStore: azurekeyvault
 
@@ -19,10 +19,10 @@ auth:
 apiVersion: dapr.io/v1alpha1
 kind: Subscription
 metadata:
-  name: app1-subscription
+  name: backend-sub
 spec:
-  topic: app1
-  route: /app1sub
+  topic: backend
+  route: /pubsubReceive
   pubsubname: servicebus
 scopes:
-- app1
+- backend
