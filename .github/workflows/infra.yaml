@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@main
-      
+
       - uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
@@ -26,6 +26,10 @@ jobs:
           template: iac/main.bicep
           parameters: iac/main.parameters.json
           region: 'uksouth'
+
+      - name: mask msi resource id
+        run: |
+          echo "::add-mask::${{ steps.mainAzureDeploy.outputs.msiResourceId }}"
 
       - name: deploy perms bicep template
         uses: Azure/arm-deploy@v1
@@ -43,6 +47,15 @@ jobs:
 
       - name: configure aks cluster
         run: sh ./k8s/scripts/configure_cluster.sh
+        env:
+          RSG_NAME: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
+          AKS_CLUSTER_NAME: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
+          ACR_NAME: ${{ steps.mainAzureDeploy.outputs.acrName }}
+          MSI_RESOURCE_ID: ${{ steps.mainAzureDeploy.outputs.msiResourceId }}
+        continue-on-error: false
+
+      - name: install dapr
+        run: sh ./k8s/scripts/install-dapr.sh
         env:
           RSG_NAME: ${{ steps.mainAzureDeploy.outputs.resourceGroupName }}
           AKS_CLUSTER_NAME: ${{ steps.mainAzureDeploy.outputs.aksClusterName }}
