@@ -13,8 +13,9 @@ def hello_name(name):
 
 @app.route('/sync', methods = ['POST'])
 def sendSynchronously():
-    response = DaprClient.invoke_method(app_id='backend', method_name='httpReceive', content_type=request.content_type, data=request.data, http_verb='post')
-    print(response.content_type, flush=True)
-    print(response.text(), flush=True)
+    with DaprClient() as d:
+        response = d.invoke_method(app_id='backend', method_name='httpReceive', content_type=request.content_type, data=request.data, http_verb='post')
+        print(response.content_type, flush=True)
+        print(response.text(), flush=True)
 
 app.run()
