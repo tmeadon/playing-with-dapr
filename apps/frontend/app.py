@@ -17,5 +17,6 @@ def sendSynchronously():
         response = d.invoke_method(app_id='backend', method_name='httpReceive', content_type=request.content_type, data=request.data, http_verb='post')
         print(response.content_type, flush=True)
         print(response.text(), flush=True)
+        return response.text()
 
 app.run()
