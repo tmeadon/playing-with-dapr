@@ -6,18 +6,19 @@ from flask.wrappers import Response
 
 app = Flask(__name__)
 
-@app.route('/httpReceive', methods = ['POST'])
-def httpReceive():
-    body = request.json
-    print("received via http {0}".format(body), flush=True)
-    saveState('backend0', body["id"], request.data)
+@app.route('/httpReceive/<id>', methods = ['POST'])
+def httpReceive(id):
+    print("received via http {0}".format(request.data), flush=True)
+    saveState('backend0', id, request.data)
     return request.get_json()
 
 @app.route('/pubsubReceive', methods = ['POST'])
 def pubsubReceive():
     body = request.json
+    id = body["id"]
+    value = body["value"]
     print("received via pubsub: {}".format(body), flush=True)
-    saveState('backend1', body["id"], request.data)
+    saveState('backend1', id, value)
     return Response({'success':True}, HTTPStatus.OK, {'ContentType':'application/json'})
 
 def saveState(backendName, key, value):

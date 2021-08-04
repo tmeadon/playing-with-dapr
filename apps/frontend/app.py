@@ -11,12 +11,18 @@ def hello_world():
 def hello_name(name):
     return "Hey {}".format(name)
 
-@app.route('/sync', methods = ['POST'])
-def sendSynchronously():
+@app.route('/sync/<id>', methods = ['POST'])
+def sendSynchronously(id):
     with DaprClient() as d:
-        response = d.invoke_method(app_id='backend', method_name='httpReceive', content_type=request.content_type, data=request.data, http_verb='post')
+        response = d.invoke_method(app_id='backend', method_name='httpReceive/{0}'.format(id), content_type=request.content_type, data=request.data, http_verb='post')
         print(response.content_type, flush=True)
         print(response.text(), flush=True)
         return response.text()
+
+@app.route('/async/<id>', methods = ['POST'])
+def sendAsynchronously(id):
+    with DaprClient() as d:
+        message = '{"id":"{}", "value":"{}"}'.format(id, request.data)
+        response = d.publish_event(pubsub_name='servicebus', topic_name='backend', data=message)
 
 app.run()
