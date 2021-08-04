@@ -19,7 +19,7 @@ def pubsubReceive():
     print("received via pubsub: {}".format(body), flush=True)
     data = json.loads(body['data'])
     print("received via pubsub: {}".format(data), flush=True)
-    saveState('backend1', data['id'], data['value'])
+    saveState('backend1', data['id'], json.dumps(data['value']))
     return Response({'success':True}, HTTPStatus.OK, {'ContentType':'application/json'})
 
 def saveState(backendName, key, value):
