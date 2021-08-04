@@ -10,7 +10,7 @@ app = Flask(__name__)
 def httpReceive():
     body = request.json
     print("received via http {0}".format(body), flush=True)
-    
+    saveState('backend0', body["id"], request.data)
     return request.get_json()
 
 @app.route('/pubsubReceive', methods = ['POST'])
