@@ -24,8 +24,9 @@ jobs:
     
     - name: build and push container image
       run: |
-        docker build . -f apps/backend/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:$BUILD_NUMBER
+        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:$BUILD_NUMBER
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:$BUILD_NUMBER
+      working-directory: ./apps/backend
 
   build_frontend:
     runs-on: ubuntu-latest
@@ -43,5 +44,6 @@ jobs:
     
     - name: build and push container image
       run: |
-        docker build . -f apps/frontend/Dockerfile -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:$BUILD_NUMBER
+        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:$BUILD_NUMBER
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:$BUILD_NUMBER
+      working-directory: ./apps/frontend
