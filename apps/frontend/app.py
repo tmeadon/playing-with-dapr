@@ -18,13 +18,13 @@ def hello_name(name):
 @app.route('/sync/<id>', methods = ['GET'])
 def getSyncStore(id):
     with DaprClient() as d:
-        response = d.invoke_method(app_id='backend', method_name='http/{0}'.format(id), http_verb='get')
+        response = d.invoke_method(app_id='backend', method_name='http/{0}'.format(id), http_verb='get', data="")
         return response
 
 @app.route('/async/<id>', methods = ['GET'])
 def getAsyncStore(id):
     with DaprClient() as d:
-        response = d.invoke_method(app_id='backend', method_name='pubsub/{0}'.format(id), http_verb='get')
+        response = d.invoke_method(app_id='backend', method_name='pubsub/{0}'.format(id), http_verb='get', data="")
         return response
 
 @app.route('/sync/<id>', methods = ['POST'])
