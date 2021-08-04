@@ -16,8 +16,8 @@ def httpReceive(id):
 def pubsubReceive():
     body = request.json
     print("received via pubsub: {}".format(body), flush=True)
-    id = body["id"]
-    value = body["value"]
+    id = body['data']['id']
+    value = body['data']["value"]
     print("received via pubsub: {}".format(body), flush=True)
     saveState('backend1', id, value)
     return Response({'success':True}, HTTPStatus.OK, {'ContentType':'application/json'})
