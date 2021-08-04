@@ -11,10 +11,20 @@ resource rsg 'Microsoft.Resources/resourceGroups@2020-10-01' = {
   }
 }
 
+module logs 'logs.bicep' = {
+  scope: rsg
+  name: 'logs'
+  params: {
+    baseName: baseName
+    location: location
+  }
+}
+
 module aks 'aks.bicep' = {
   scope: rsg
   name: 'aks'
   params: {
+    logWorkspaceResourceId: logs.outputs.resourceId
     clusterName: baseName
     location: location
   }

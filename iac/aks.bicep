@@ -1,5 +1,6 @@
 param clusterName string
 param location string
+param logWorkspaceResourceId string
 
 resource cluster 'Microsoft.ContainerService/managedClusters@2021-02-01' = {
   name: clusterName
@@ -33,6 +34,12 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2021-02-01' = {
       }
       azurePolicy: {
         enabled: true
+      }
+      omsagent: {
+        enabled: true
+        config: {
+          logAnalyticsWorkspaceResourceID: logWorkspaceResourceId
+        }
       }
     }
   }
