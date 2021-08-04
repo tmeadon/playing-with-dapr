@@ -66,6 +66,7 @@ module acr 'acr.bicep' = {
   params: {
     baseName: baseName
     location: location
+    aksClientId: aks.outputs.kubeletIdentityClientId
   }
 }
 

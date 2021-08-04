@@ -43,4 +43,5 @@ resource cluster 'Microsoft.ContainerService/managedClusters@2021-02-01' = {
 
 output clusterName string = cluster.name
 output nodeResourceGroup string = cluster.properties.nodeResourceGroup
+output kubeletIdentityClientId string = cluster.properties.identityProfile.kubeletidentity.clientId
 
