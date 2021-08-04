@@ -3,6 +3,7 @@ from http import HTTPStatus
 from flask import Flask, request
 from dapr.clients import DaprClient
 from flask.wrappers import Response
+import json
 
 app = Flask(__name__)
 
@@ -16,10 +17,9 @@ def httpReceive(id):
 def pubsubReceive():
     body = request.json
     print("received via pubsub: {}".format(body), flush=True)
-    id = body['data']['id']
-    value = body['data']["value"]
-    print("received via pubsub: {}".format(body), flush=True)
-    saveState('backend1', id, value)
+    data = json.loads(body['data'])
+    print("received via pubsub: {}".format(data), flush=True)
+    saveState('backend1', data['id'], data['value'])
     return Response({'success':True}, HTTPStatus.OK, {'ContentType':'application/json'})
 
 def saveState(backendName, key, value):
