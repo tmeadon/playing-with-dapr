@@ -16,6 +16,7 @@ spec:
         dapr.io/enabled: "true"
         dapr.io/app-id: "backend"
         dapr.io/app-port: "5000"
+        dapr.io/config: "appconfig"
     spec:
       containers:
       - name: backend
