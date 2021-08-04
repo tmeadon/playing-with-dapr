@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        aadpodidbinding: msi
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "frontend"
+        dapr.io/app-port: "5000"
+    spec:
+      containers:
+      - name: frontend
+        image: ilruqzwlxrxd2.azurecr.io/frontend:#{BUILD_NUMBER}#
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 5000

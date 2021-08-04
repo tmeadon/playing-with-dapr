@@ -47,3 +47,40 @@ jobs:
         docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:$BUILD_NUMBER
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:$BUILD_NUMBER
       working-directory: ./apps/frontend
+
+  deploy:
+
+    needs:
+    - build_backend
+    - build_frontend
+    if: github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    env:
+      RESOURCE_GROUP_NAME: dapr-testing
+      AKS_CLUSTER_NAME: dapr-testing
+
+    steps:
+    - name: git checkout
+      uses: actions/checkout@v2
+
+    - name: connect to aks
+      uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ env.AKS_CLUSTER_NAME }}
+        resource-group: ${{ env.RESOURCE_GROUP_NAME }}
+
+    - name: replace image tag token
+      uses: cschleiden/replace-tokens@v1
+      with:
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        files: '["k8s/apps/*.yaml"]'
+      env:
+        BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
+
+    - name: apply k8s manifest
+      run: |
+        kubectl apply -f ./k8s/apps

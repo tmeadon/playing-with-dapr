@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        aadpodidbinding: msi
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "backend"
+        dapr.io/app-port: "5000"
+    spec:
+      containers:
+      - name: backend
+        image: ilruqzwlxrxd2.azurecr.io/backend:#{BUILD_NUMBER}#
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 5000
