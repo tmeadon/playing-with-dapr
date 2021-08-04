@@ -1,5 +1,6 @@
 from flask import Flask, request
 from dapr.clients import DaprClient
+import json
 
 app = Flask(__name__)
 
@@ -22,7 +23,7 @@ def sendSynchronously(id):
 @app.route('/async/<id>', methods = ['POST'])
 def sendAsynchronously(id):
     with DaprClient() as d:
-        message = '{"id":"{}", "value":"{}"}'.format(id, request.data)
-        response = d.publish_event(pubsub_name='servicebus', topic_name='backend', data=message)
+        message = json.dumps({'id': id, 'value': request.data})
+        d.publish_event(pubsub_name='servicebus', topic_name='backend', data=message)
 
 app.run()
