@@ -19,13 +19,13 @@ def hello_name(name):
 def getSyncStore(id):
     with DaprClient() as d:
         response = d.invoke_method(app_id='backend', method_name='http/{0}'.format(id), http_verb='get', data="")
-        return response
+        return response.text
 
 @app.route('/async/<id>', methods = ['GET'])
 def getAsyncStore(id):
     with DaprClient() as d:
         response = d.invoke_method(app_id='backend', method_name='pubsub/{0}'.format(id), http_verb='get', data="")
-        return response
+        return response.text
 
 @app.route('/sync/<id>', methods = ['POST'])
 def sendSynchronously(id):
