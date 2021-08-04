@@ -38,6 +38,6 @@ def saveState(backendName, key, value):
 
 def getState(backendName, key):
     with DaprClient() as d:
-        d.get_state(backendName, key)
+        return d.get_state(backendName, key)
 
 app.run()
