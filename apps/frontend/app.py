@@ -23,7 +23,7 @@ def sendSynchronously(id):
 @app.route('/async/<id>', methods = ['POST'])
 def sendAsynchronously(id):
     with DaprClient() as d:
-        message = json.dumps({'id': id, 'value': request.data})
+        message = json.dumps({'id': id, 'value': request.json})
         d.publish_event(pubsub_name='servicebus', topic_name='backend', data=message)
 
 app.run()
