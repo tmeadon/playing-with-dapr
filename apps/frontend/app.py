@@ -1,6 +1,9 @@
+from http import HTTPStatus
 from flask import Flask, request
 from dapr.clients import DaprClient
 import json
+
+from flask.wrappers import Response
 
 app = Flask(__name__)
 
@@ -25,5 +28,6 @@ def sendAsynchronously(id):
     with DaprClient() as d:
         message = json.dumps({'id': id, 'value': request.json})
         d.publish_event(pubsub_name='servicebus', topic_name='backend', data=message)
+        return Response(None, HTTPStatus.ACCEPTED)
 
 app.run()
