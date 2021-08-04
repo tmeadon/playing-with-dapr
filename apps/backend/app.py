@@ -15,6 +15,7 @@ def httpReceive(id):
 @app.route('/pubsubReceive', methods = ['POST'])
 def pubsubReceive():
     body = request.json
+    print("received via pubsub: {}".format(body), flush=True)
     id = body["id"]
     value = body["value"]
     print("received via pubsub: {}".format(body), flush=True)
