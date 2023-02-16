@@ -16,5 +16,5 @@ protobuf==3.18.3
 python-dateutil==2.8.2
 six==1.16.0
 typing-extensions==3.10.0.0
-Werkzeug==2.0.1
+Werkzeug==2.2.3
 yarl==1.6.3
